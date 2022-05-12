@@ -1,4 +1,5 @@
-#include <server.h>
+#include "server.h"
+
 
 int main() {
 
@@ -81,19 +82,11 @@ int main() {
                 char request[1024];
                 int bytes_recieved = recv(client_socket, request, 1024, 0);
 
-                //close client if nothing recieved
-                if(bytes_recieved <= 1){
-                    close(client_socket);
-                    exit(0);
-                }
 
-                //convert request string to uppercase and send
-                for (int i = 0; i < bytes_recieved; i++)
-                {
-                    request[i] = toupper(request[i]);
-                }
-
-                send(client_socket, request, bytes_recieved, 0);
+                //http400(client_socket);
+                //exit(1);
+                http404(client_socket);
+                exit(1);
             }
         }   //if pid == 0
     }   //while 1
@@ -101,3 +94,4 @@ int main() {
     close(listen_socket);
     return 0;
 }
+
