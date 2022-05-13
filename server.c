@@ -78,20 +78,53 @@ int main() {
                 
                 close(listen_socket);
 
-                //recieve request from client
-                char request[1024];
-                int bytes_recieved = recv(client_socket, request, 1024, 0);
+                //recieve HTTP request from client
+                char httpRequest[2048];
+                int bytes_recieved = recv(client_socket, httpRequest, sizeof(httpRequest), 0);
+                
+                //exit if client disconnects or error.
+                if(bytes_recieved < 1){
+                    close(client_socket);
+                    exit(1);
+                }
 
 
-                //http400(client_socket);
-                //exit(1);
-                http404(client_socket);
-                exit(1);
-            }
+                //printf("%s\n", httpRequest);    //debug
+
+
+                //get the first line, split on the newline
+                //the first line usually contains GET / HTTP/1.1
+                char *request = strtok(httpRequest, "\n");
+
+
+                //check if the request is valid http, or send 404
+                if(strncmp("GET /", httpRequest, 5) == 0){
+                    
+
+                    
+                    //get the request, minus the GET / at the front
+                    char * path = httpRequest + 4;
+
+                    
+                }
+                else{
+                    http404(client_socket);
+                    exit(1);
+                }
+                
+
+                if(1){
+                    http400(client_socket);
+                    exit(1);
+                }
+            }   //while 1 inside the child process
         }   //if pid == 0
-    }   //while 1
+    }   //while 1 outside the fork
 
     close(listen_socket);
     return 0;
 }
 
+
+
+//GET / HTTP/1.1
