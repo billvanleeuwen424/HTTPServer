@@ -12,12 +12,18 @@
 
 //from Hands on Network Programming with C by Lewis Van Winkle pg 208
 void http400(int fd) {
-    const char *http400 = "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 11\r\n\r\nBad Request";
+    const char *http400 = "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 15\r\n\r\n400 Bad Request";
     send(fd, http400, strlen(http400), 0);
     close(fd);
 }
 void http404(int fd) {
-    const char *http400 = "HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 9\r\n\r\nNot Found";
-    send(fd, http400, strlen(http400), 0);
+    const char *http404 = "HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 13\r\n\r\n404 Not Found";
+    send(fd, http404, strlen(http404), 0);
     close(fd);
 }
+void http418(int fd) {
+    const char *http418 = "HTTP/1.1 418 I am a teapot\r\nConnection: close\r\nContent-Length: 17\r\n\r\n418 I am a teapot";
+    send(fd, http418, strlen(http418), 0);
+    close(fd);
+}
+
