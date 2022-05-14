@@ -96,16 +96,22 @@ int main() {
                 //the first line usually contains GET / HTTP/1.1
                 char *request = strtok(httpRequest, "\n");
 
-
                 //check if the request is valid http, or send 404
                 if(strncmp("GET /", httpRequest, 5) == 0){
                     
 
                     
                     //get the request, minus the GET / at the front
-                    char * path = httpRequest + 4;
+                    char * unParsedPath = httpRequest + 4;
+
+
+                    //get the filepath of the request
+                    char *path = strtok(unParsedPath, " ");
+                    
 
                     
+
+
                 }
                 else{
                     http404(client_socket);
