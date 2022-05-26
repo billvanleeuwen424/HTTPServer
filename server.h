@@ -39,7 +39,7 @@ void http500(int fd) {
 }
 //sends a basic 200 response string
 char * http200(int fd, size_t contentSize, char *contentType){
-    char *response;
+    char response[1024];
     sprintf(response, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: %u\r\nContent-Type: %s\r\n\r\n", contentSize, contentType);
     send(fd, response, strlen(response), 0);
 }

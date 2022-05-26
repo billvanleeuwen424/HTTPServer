@@ -121,10 +121,10 @@ int main() {
                         http400(clientSocket);
                         exit(1);
                     }   
-                    
+
                     //serve standard file
                     if (strcmp(path, "/") == 0){
-                        path = "/index.html";
+                        path = "index.html";
                     }
 
                     //open file, check if exists
@@ -135,7 +135,7 @@ int main() {
                     } 
 
                     //seek to end, check for errors
-                    if(!fseek(fp, 0L, SEEK_END)){
+                    if(fseek(fp, 0L, SEEK_END)){
                         http500(clientSocket);
                         exit(1);
                     }
@@ -146,7 +146,11 @@ int main() {
 
                     //send a 200, and the file
                     http200(clientSocket, fileLength, contentType);
+
                     sendContent(clientSocket, fp);
+
+                    
+                    close(clientSocket);
                     exit(0);
                     
                 }
