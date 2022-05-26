@@ -13,31 +13,38 @@
 //from Hands on Network Programming with C by Lewis Van Winkle pg 208
 //sends a basic 400 response string
 void http400(int fd) {
-    const char *http400 = "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 15\r\n\r\n400 Bad Request";
+    const char *http400 = "HTTP/1.0 400 Bad Request\r\nConnection: close\r\nContent-Length: 15\r\n\r\n400 Bad Request";
     send(fd, http400, strlen(http400), 0);
     close(fd);
 }
 //sends a basic 404 response string
 void http404(int fd) {
-    const char *http404 = "HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 13\r\n\r\n404 Not Found";
+    const char *http404 = "HTTP/1.0 404 Not Found\r\nConnection: close\r\nContent-Length: 13\r\n\r\n404 Not Found";
     send(fd, http404, strlen(http404), 0);
     close(fd);
 }
 //sends a basic 418 response string
 void http418(int fd) {
-    const char *http418 = "HTTP/1.1 418 I am a teapot\r\nConnection: close\r\nContent-Length: 17\r\n\r\n418 I am a teapot";
+    const char *http418 = "HTTP/1.0 418 I am a teapot\r\nConnection: close\r\nContent-Length: 17\r\n\r\n418 I am a teapot";
+    send(fd, http418, strlen(http418), 0);
+    close(fd);
+}
+//sends a basic 500 response string
+void http500(int fd) {
+    const char *http418 = "HTTP/1.0 500 Internal Server Error\r\nConnection: close\r\nContent-Length: 25\r\n\r\n500 Internal Server Error";
     send(fd, http418, strlen(http418), 0);
     close(fd);
 }
 
-
 //serves the requested resource
-//returns 0 on success, -1 on directory traversal attack, 1 on resource not found
+//returns 0 on success, 
+//    -1 on errors, or directory traversal attack, 
+//    1 on resource not found
 int serve(char *path){
 
     //directory traversal check
     if(strstr(path, "..")){
-        return -1 
+        return -1;
     }
 
     //check if file exists
@@ -45,9 +52,29 @@ int serve(char *path){
         return 1;   
     }
 
-    if(path > 100)
+    //check if path too long
+    if(strlen(path) > 100){
+        return 1;
+    }   
     
-    else{
+    //serve standard file
+    if (strcmp(path, "/") == 0){
+        path = "/index.html";
+    }
+
+    //open file, check if exists
+    FILE *fp = fopen(path, "rb");
+    if(!fp){
+        return 1;
+    } 
+
+    char *response = prepServeResponse(path, fp);
+}
+
+char * prepServeResponse(char *path, FILE *fp){
+    
+    if(!fseek(fp, 0L, SEEK_END)){
 
     }
+    size_t fileLength = ftell(fp);
 }
