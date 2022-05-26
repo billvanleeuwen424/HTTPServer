@@ -175,7 +175,3 @@ int main() {
     close(listen_socket);
     return 0;
 }
-
-
-
-//GET / HTTP/1.1
