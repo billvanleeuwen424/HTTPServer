@@ -140,8 +140,10 @@ int main() {
                         exit(1);
                     }
 
-
+                    //get file size
                     size_t fileLength = ftell(fp);
+
+                    
 
                 }
                 else{
