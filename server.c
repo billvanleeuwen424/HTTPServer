@@ -99,11 +99,8 @@ int main() {
                 //check if the request is valid http, or send 404
                 if(strncmp("GET /", httpRequest, 5) == 0){
                     
-
-                    
                     //get the request, except the "GET /"" at the front
                     char *unParsedPath = httpRequest + 4;
-
 
                     //get the filepath of the request
                     char *path = strtok(unParsedPath, " ");
@@ -111,7 +108,45 @@ int main() {
                     printf("%s", path); //debug
                     
 
-                    serve(path);
+
+
+                    //directory traversal check
+                    if(strstr(path, "..")){
+                        http400(client_socket);
+                        exit(1);
+                    }
+
+                    //check if file exists
+                    if(access(path, F_OK) == -1){
+                        return 1;   
+                    }
+
+                    //check if path too long
+                    if(strlen(path) > 100){
+                        http400(client_socket);
+                        exit(1);
+                    }   
+                    
+                    //serve standard file
+                    if (strcmp(path, "/") == 0){
+                        path = "/index.html";
+                    }
+
+                    //open file, check if exists
+                    FILE *fp = fopen(path, "rb");
+                    if(!fp){
+                        http404(client_socket);
+                        exit(1);
+                    } 
+
+                    //seek to end, check for errors
+                    if(!fseek(fp, 0L, SEEK_END)){
+                        http500(client_socket);
+                        exit(1);
+                    }
+
+
+                    size_t fileLength = ftell(fp);
 
                 }
                 else{
