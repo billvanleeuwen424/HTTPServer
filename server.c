@@ -3,6 +3,12 @@
 
 int main() {
 
+    //get the public directory
+    char *home = getenv("HOME");
+    char directory[128];
+    sprintf(directory, "%s/Public", home);
+
+
     //define address type we are looking for
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));   //zero out hints (THIS IS ABSOLOUTELY ESSENTIAL FOR SOME REASON)
@@ -104,10 +110,6 @@ int main() {
 
                     //get the filepath of the request
                     char *path = strtok(unParsedPath, " ");
-                    
-                    printf("%s", path); //debug
-                    
-
 
 
                     //directory traversal check
@@ -124,11 +126,16 @@ int main() {
 
                     //serve standard file
                     if (strcmp(path, "/") == 0){
-                        path = "index.html";
+                        path = "/index.html";
                     }
 
+                    
+                    char fullPath[115];
+                    sprintf(fullPath, "%s%s", directory, path);
+
+
                     //open file, check if exists
-                    FILE *fp = fopen(path, "rb");
+                    FILE *fp = fopen(fullPath, "rb");
                     if(!fp){
                         http404(clientSocket);
                         exit(1);
@@ -143,6 +150,7 @@ int main() {
                     //get file size and type
                     size_t fileLength = ftell(fp);
                     char *contentType = getContentType(path);
+                    rewind(fp);
 
                     //send a 200, and the file
                     http200(clientSocket, fileLength, contentType);
