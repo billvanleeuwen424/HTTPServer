@@ -50,16 +50,16 @@ int main() {
 
     printf("Waiting for connections...\n");
 
-    int client_socket;
+    int clientSocket;
 
     while(1){
         
         struct sockaddr_storage client;
         socklen_t clientlen = sizeof(client);
 
-        if((client_socket = accept(listen_socket, (struct sockaddr*) &client, &clientlen)) < 0){
+        if((clientSocket = accept(listen_socket, (struct sockaddr*) &client, &clientlen)) < 0){
             fprintf(stderr, "Error accepting connection. %s\n", strerror(errno));
-            close(client_socket);
+            close(clientSocket);
             close(listen_socket);
             return -1;
         }
@@ -80,11 +80,11 @@ int main() {
 
                 //recieve HTTP request from client
                 char httpRequest[2048];
-                int bytes_recieved = recv(client_socket, httpRequest, sizeof(httpRequest), 0);
+                int bytes_recieved = recv(clientSocket, httpRequest, sizeof(httpRequest), 0);
                 
                 //exit if client disconnects or error.
                 if(bytes_recieved < 1){
-                    close(client_socket);
+                    close(clientSocket);
                     exit(1);
                 }
 
@@ -112,13 +112,13 @@ int main() {
 
                     //directory traversal check
                     if(strstr(path, "..")){
-                        http400(client_socket);
+                        http400(clientSocket);
                         exit(1);
                     }
 
                     //check if path too long
                     if(strlen(path) > 100){
-                        http400(client_socket);
+                        http400(clientSocket);
                         exit(1);
                     }   
                     
@@ -130,30 +130,33 @@ int main() {
                     //open file, check if exists
                     FILE *fp = fopen(path, "rb");
                     if(!fp){
-                        http404(client_socket);
+                        http404(clientSocket);
                         exit(1);
                     } 
 
                     //seek to end, check for errors
                     if(!fseek(fp, 0L, SEEK_END)){
-                        http500(client_socket);
+                        http500(clientSocket);
                         exit(1);
                     }
 
-                    //get file size
+                    //get file size and type
                     size_t fileLength = ftell(fp);
+                    char *contentType = getContentType(path);
 
-                    
+                    //send a 200
+                    http200(clientSocket, fileLength, contentType);
+
 
                 }
                 else{
-                    http404(client_socket);
+                    http404(clientSocket);
                     exit(1);
                 }
                 
 
                 if(1){
-                    http400(client_socket);
+                    http400(clientSocket);
                     exit(1);
                 }
             }   //while 1 inside the child process

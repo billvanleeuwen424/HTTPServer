@@ -35,9 +35,11 @@ void http500(int fd) {
     send(fd, http418, strlen(http418), 0);
     close(fd);
 }
-
-char * prepResponse(size_t contentSize, char *content){
-
+//sends a basic 200 response string
+char * http200(int fd, size_t contentSize, char *contentType){
+    char *response;
+    sprintf(response, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: %u\r\nContent-Type: %s\r\n\r\n", contentSize, contentType);
+    send(fd, response, strlen(response), 0);
 }
 
 //from Hands on Network Programming with C by Lewis Van Winkle
