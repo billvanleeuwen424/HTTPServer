@@ -116,11 +116,6 @@ int main() {
                         exit(1);
                     }
 
-                    //check if file exists
-                    if(access(path, F_OK) == -1){
-                        return 1;   
-                    }
-
                     //check if path too long
                     if(strlen(path) > 100){
                         http400(client_socket);
