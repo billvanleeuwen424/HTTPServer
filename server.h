@@ -10,6 +10,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAXREAD 1024
+
 //from Hands on Network Programming with C by Lewis Van Winkle
 //sends a basic 400 response string
 void http400(int fd) {
@@ -40,6 +42,16 @@ char * http200(int fd, size_t contentSize, char *contentType){
     char *response;
     sprintf(response, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: %u\r\nContent-Type: %s\r\n\r\n", contentSize, contentType);
     send(fd, response, strlen(response), 0);
+}
+
+//send a file to the socket described, finishes on error or when end of file
+void sendContent(int fd, FILE *fp){
+    char *content;
+    int readSize = fread(content, 1, MAXREAD, fp);
+    while (readSize > 0) {
+        send(fd, content, readSize, 0);
+        readSize = fread(content, 1, MAXREAD, fp);
+    }
 }
 
 //from Hands on Network Programming with C by Lewis Van Winkle

@@ -144,10 +144,11 @@ int main() {
                     size_t fileLength = ftell(fp);
                     char *contentType = getContentType(path);
 
-                    //send a 200
+                    //send a 200, and the file
                     http200(clientSocket, fileLength, contentType);
-
-
+                    sendContent(clientSocket, fp);
+                    exit(0);
+                    
                 }
                 else{
                     http404(clientSocket);
@@ -155,10 +156,6 @@ int main() {
                 }
                 
 
-                if(1){
-                    http400(clientSocket);
-                    exit(1);
-                }
             }   //while 1 inside the child process
         }   //if pid == 0
     }   //while 1 outside the fork
