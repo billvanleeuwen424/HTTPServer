@@ -129,6 +129,10 @@ int main() {
                         path = "/index.html";
                     }
 
+                    //418 easter egg
+                    if (strcmp(path, "/coffee") == 0){
+                        http418(clientSocket);
+                    }
                     
                     char fullPath[115];
                     sprintf(fullPath, "%s%s", directory, path);
@@ -154,7 +158,6 @@ int main() {
 
                     //send a 200, and the file
                     http200(clientSocket, fileLength, contentType);
-
                     sendContent(clientSocket, fp);
 
                     
