@@ -69,11 +69,11 @@ int main() {
         getnameinfo((struct sockaddr*)&client, clientlen, addrstr, sizeof(addrstr), 0,0,NI_NUMERICHOST);
         printf("Connection from: %s\n", addrstr);
 
-
+        //fork process to deal with client
         int pid = fork();
+        if(pid == 0){   //if child process
 
-        if(pid == 0){
-
+            //loop until exit()
             while(1){
                 
                 close(listen_socket);
@@ -101,16 +101,17 @@ int main() {
                     
 
                     
-                    //get the request, minus the GET / at the front
-                    char * unParsedPath = httpRequest + 4;
+                    //get the request, except the "GET /"" at the front
+                    char *unParsedPath = httpRequest + 4;
 
 
                     //get the filepath of the request
                     char *path = strtok(unParsedPath, " ");
                     
-
+                    printf("%s", path); //debug
                     
 
+                    serve(path);
 
                 }
                 else{
