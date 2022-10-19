@@ -14,7 +14,7 @@ int main() {
 
     //get address
     struct addrinfo *bind_address;
-    getaddrinfo(0, "80", &hints, &bind_address);
+    getaddrinfo(0, "8080", &hints, &bind_address);
 
     /*define socket*/
     int listen_socket;
