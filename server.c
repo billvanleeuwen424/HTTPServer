@@ -3,11 +3,6 @@
 
 int main() {
 
-    //get the public directory
-    char *home = getenv("HOME");
-    char directory[128];
-    sprintf(directory, "%s/Public", home);
-
 
     //define address type we are looking for
     struct addrinfo hints;
@@ -95,9 +90,6 @@ int main() {
                 }
 
 
-                //printf("%s\n", httpRequest);    //debug
-
-
                 //get the first line, split on the newline
                 //the first line usually contains GET / HTTP/1.1
                 char *request = strtok(httpRequest, "\n");
@@ -110,7 +102,7 @@ int main() {
 
                     //get the filepath of the request
                     char *path = strtok(unParsedPath, " ");
-
+                    printf("%s", path);
 
                     //directory traversal check
                     if(strstr(path, "..")){
@@ -126,7 +118,7 @@ int main() {
 
                     //serve standard file
                     if (strcmp(path, "/") == 0){
-                        path = "/index.html";
+                        path = "./index.html";
                     }
 
                     //418 easter egg
@@ -134,12 +126,9 @@ int main() {
                         http418(clientSocket);
                     }
                     
-                    char fullPath[115];
-                    sprintf(fullPath, "%s%s", directory, path);
-
 
                     //open file, check if exists
-                    FILE *fp = fopen(fullPath, "rb");
+                    FILE *fp = fopen(path, "rb");
                     if(!fp){
                         http404(clientSocket);
                         exit(1);
